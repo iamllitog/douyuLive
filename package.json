@@ -1,0 +1,28 @@
+{
+  "name": "douyulive",
+  "version": "1.0.0",
+  "description": "在服务器自动播放视频工具",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test/**/*.test.js"
+  },
+  "keywords": [
+    "ffmpeg",
+    "douyu",
+    "rtmp"
+  ],
+  "author": "litong",
+  "license": "ISC",
+  "dependencies": {
+    "chai": "^3.5.0",
+    "del": "^2.2.1",
+    "download": "^5.0.2",
+    "fluent-ffmpeg": "^2.1.0",
+    "lodash": "^4.13.1",
+    "moment": "^2.14.1",
+    "unzip": "^0.1.11"
+  },
+  "devDependencies": {
+    "del": "^2.2.1"
+  }
+}
