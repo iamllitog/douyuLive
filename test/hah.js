@@ -10,4 +10,3 @@ if(!chapter){
 }
 
 let nextChapter = helper.getNextChapter(chapter.chapter,chapter.section);
-console.log(nextChapter);
