@@ -13,6 +13,9 @@ const baseConfig = require('./config/baseConfig');
 
 //得到下载文件信息
 function __getDownloadFileInfo(chapter,section) {
+	if (!fs.existsSync('data')) {
+		fs.mkdirSync('data')
+	}
 	return new Promise((reslove,reject) => {
 	  	let ls = exec(`casperjs ./casperSH/downloadFile.js ${chapter} ${section} ${baseConfig.cookie_BDUSS} ${baseConfig.cookie_STOKEN}`,(error,stdout,stderr) => {
 	  		if (error ) {
