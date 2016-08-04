@@ -7,6 +7,7 @@ const playFileList = require('./config/playFileList')();
 const downloadHandle = require('./downloadHandle');
 const videoHandle = require('./videoHandle');
 const del = require('del');
+const fs = require('fs');
 var starttime = new Date().getTime();
 
 //1.读取上次章节播放
@@ -35,11 +36,14 @@ function loopLogic(currentChapter) {
 		return loopLogic(nextChapter);
 	});
 }
-
 //2.根据读取到的章节去百度云盘上去数据
-downloadHandle.downloadByCS(chapter.chapter,chapter.section).then(function () {
-	console.log('download finish');
+new Promise((reslove) =>{
+	reslove(fs.existsSync(`./data/${chapter.section}`));
+}).then((haveDownLoadFile) =>{
+	if(!haveDownLoadFile)	return downloadHandle.downloadByCS(chapter.chapter,chapter.section);
+	return;
 }).then(() => {
+	console.log('download finish');
 	console.log('开始直播！！！');
 	return loopLogic(chapter);
 }).catch(function (err){

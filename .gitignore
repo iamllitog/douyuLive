@@ -1,5 +1,6 @@
 node_modules/
 data/
-config/
+config/baseConfig.js
+config/lastChapter.json
 docker/*/software/
 config.tar.gz
