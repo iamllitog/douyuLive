@@ -112,7 +112,7 @@ module.exports = {
                     '-ar 44100'
                 ])
                 .format('flv')
-                .output(outputPath, {end: true}).run();
+                .output(outputPath).run();
             });
         });
         
