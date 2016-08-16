@@ -55,6 +55,7 @@ module.exports = {
 	 * @return {Promise}         返回对应文件是否下载成功
 	 */
 	downloadByCS : function (chapter,section) {
+		logger.info(`开始下载:${section}.zip`);
 		return __getDownloadFileInfo(chapter,section)
 		.then((downloadInfo) =>{
 			//下载
