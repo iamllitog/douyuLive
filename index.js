@@ -21,10 +21,6 @@ if(!chapter){
 	helper.setLastChapter(chapter);
 }
 
-setTimeout(function() {
-	throw new Error('zhongduan');
-}, 5000);
-
 function loopLogic(currentChapter) {
 	return Promise.all([
 		videoHandle.pushStream(currentChapter),
