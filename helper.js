@@ -6,7 +6,7 @@ const fs = require('fs');
 const _ = require('lodash');
 const ArgumentError = require('./error/ArgumentError');
 const playFileList = require('./config/playFileList');
-const myLog = require('./myLog');
+const logger = require('./logger');
 
 var helper = {
 	/**
@@ -20,7 +20,7 @@ var helper = {
 				file = fs.readFileSync('./config/lastChapter.json');
 			file = JSON.parse(file);
 		}catch(e){
-			myLog.error(e);
+			logger.error(e);
 		}
 		
 		return file;

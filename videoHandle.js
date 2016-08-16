@@ -3,7 +3,7 @@
  */
 const ffmpeg = require('fluent-ffmpeg');
 const baseConf= require('./config/baseConfig');
-const myLog = require('./myLog');
+const logger = require('./logger');
 const waterMarkList = require('./config/waterMarkList');
 
 module.exports = {
@@ -89,16 +89,16 @@ module.exports = {
                 .inputOptions('-ac 2')
                 .complexFilter(filterList)
                 .on('start', function(commandLine) {
-                    myLog.log('开始串流');
+                    logger.info('开始串流');
                 })
                 .on('error', function(err, stdout, stderr) {
-                    myLog.error('error: ' + err.message);
-                    myLog.error('stdout: ' + stdout);
-                    myLog.error('stderr: ' + stderr);
+                    logger.error('error: ' + err.message);
+                    logger.error('stdout: ' + stdout);
+                    logger.error('stderr: ' + stderr);
                     reject(err);
                 })
                 .on('end', function() {
-                    myLog.log('当前视频串流完成 !');
+                    logger.info('当前视频串流完成 !');
                     reslove();
                 })
                 .addOptions([

@@ -8,6 +8,7 @@ const downloadHandle = require('./downloadHandle');
 const videoHandle = require('./videoHandle');
 const del = require('del');
 const fs = require('fs');
+const logger = require('./logger');
 var starttime = new Date().getTime();
 
 //1.读取上次章节播放
@@ -19,6 +20,10 @@ if(!chapter){
 	chapter.section = playFileList[0].section[0];
 	helper.setLastChapter(chapter);
 }
+
+setTimeout(function() {
+	throw new Error('zhongduan');
+}, 5000);
 
 function loopLogic(currentChapter) {
 	return Promise.all([
@@ -43,9 +48,8 @@ new Promise((reslove) =>{
 	if(!haveDownLoadFile)	return downloadHandle.downloadByCS(chapter.chapter,chapter.section);
 	return;
 }).then(() => {
-	console.log('download finish');
-	console.log('开始直播！！！');
+	logger.info('开始直播！！！');
 	return loopLogic(chapter);
 }).catch(function (err){
-	console.log(err);
+	logger.info(err);
 });

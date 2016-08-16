@@ -19,6 +19,7 @@
     "download": "^5.0.2",
     "fluent-ffmpeg": "^2.1.0",
     "lodash": "^4.13.1",
+    "log4js": "^0.6.38",
     "moment": "^2.14.1",
     "unzip": "^0.1.11"
   },

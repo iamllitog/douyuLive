@@ -4,7 +4,7 @@
 const _ = require('lodash');
 const exec = require('child_process').exec;
 const ArgumentError = require('./error/ArgumentError');
-const myLog = require('./myLog');
+const logger = require('./logger');
 const download = require('download');
 const unzip = require('unzip');
 const del = require('del');
@@ -29,7 +29,7 @@ function __getDownloadFileInfo(chapter,section) {
 			try{
 				downloadInfo = JSON.parse(stdout);
 			}catch(e){
-				myLog.error(e);
+				logger.error(e);
 				reject(e);
 				return;
 			}
@@ -64,7 +64,7 @@ module.exports = {
 				fs.writeFileSync(`${__dirname}/data/${section}.zip`, data);
 			});
 		}).then(() => {
-			console.log('下载完成');
+			logger.info(`下载完成:${section}.zip`);
 			//解压到data根目录
 			return new Promise((reslove,reject) => {
 				let flag = true;
