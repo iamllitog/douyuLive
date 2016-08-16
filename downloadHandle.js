@@ -62,6 +62,7 @@ module.exports = {
 			return download(downloadInfo.url,{
 				headers : downloadInfo.headers
 			}).then(data => {
+				logger.info(`写入:${__dirname}/data/${section}.zip`);
 				fs.writeFileSync(`${__dirname}/data/${section}.zip`, data);
 			});
 		}).then(() => {
