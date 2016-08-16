@@ -4,3 +4,4 @@ config/baseConfig.js
 config/lastChapter.json
 docker/*/software/
 config.tar.gz
+logs/
