@@ -5,11 +5,15 @@
 const helper = require('./helper');
 const playFileList = require('./config/playFileList')();
 const downloadHandle = require('./downloadHandle');
+const openLiveHandle = require('./openLiveHandle');
 const videoHandle = require('./videoHandle');
 const del = require('del');
 const fs = require('fs');
 const logger = require('./logger');
-var starttime = new Date().getTime();
+
+var globalLiveInfo = null;
+
+logger.info('启动');
 
 //1.读取上次章节播放
 var chapter = helper.getLastChapter();
@@ -23,7 +27,7 @@ if(!chapter){
 
 function loopLogic(currentChapter) {
 	return Promise.all([
-		videoHandle.pushStream(currentChapter),
+		videoHandle.pushStream(currentChapter,globalLiveInfo),
 		new Promise((reslove,reject) => {
 			let nextChapter = helper.getNextChapter(currentChapter.chapter,currentChapter.section);
 			return downloadHandle.downloadByCS(nextChapter.chapter,nextChapter.section).then(() =>{
@@ -38,8 +42,9 @@ function loopLogic(currentChapter) {
 	});
 }
 //2.根据读取到的章节去百度云盘上去数据
-new Promise((reslove) =>{
-	reslove(fs.existsSync(`./data/${chapter.section}`));
+openLiveHandle.startLiveAndGetInfo().then((liveInfo) => {
+	globalLiveInfo = liveInfo;
+	return fs.existsSync(`./data/${chapter.section}`) ;
 }).then((haveDownLoadFile) =>{
 	if(!haveDownLoadFile)	return downloadHandle.downloadByCS(chapter.chapter,chapter.section);
 	return;
@@ -47,5 +52,5 @@ new Promise((reslove) =>{
 	logger.info('开始直播！！！');
 	return loopLogic(chapter);
 }).catch(function (err){
-	logger.info(err);
+	logger.error(err);
 });

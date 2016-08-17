@@ -2,7 +2,6 @@
  * 处理视频流到bilibili直播上
  */
 const ffmpeg = require('fluent-ffmpeg');
-const baseConf= require('./config/baseConfig');
 const logger = require('./logger');
 const waterMarkList = require('./config/waterMarkList');
 
@@ -10,9 +9,10 @@ module.exports = {
     /**
      * 推流
      * @param  {String} chapter 推流文件
+     * @param  {Object} liveInfo 直播信息
      * @return {Promise} 
      */
-    pushStream : function(chapter) {
+    pushStream : function(chapter,liveInfo) {
         let section = chapter.section;
         let starttime = chapter.starttime ? chapter.starttime : 0;
         let duration = chapter.duration;
@@ -34,7 +34,7 @@ module.exports = {
         }).then((aspect) => {
             return new Promise((reslove ,reject) => {
             let inputPath = `${__dirname}/data/${section}`;
-            let outputPath = `${baseConf.streamPath}/${baseConf.streamPwd}`;
+            let outputPath = `${liveInfo.rtmpUrl}/${liveInfo.rtmpCode}`;
 
             let videoW = null;
             let videoH = null;
@@ -89,7 +89,7 @@ module.exports = {
                 .inputOptions('-ac 2')
                 .complexFilter(filterList)
                 .on('start', function(commandLine) {
-                    logger.info('开始串流');
+                    logger.info(`开始串流:${outputPath}`);
                 })
                 .on('error', function(err, stdout, stderr) {
                     logger.error('error: ' + err.message);
