@@ -34,39 +34,55 @@ var headers = null;
 
 casper.start('http://pan.baidu.com/disk/home#list/path=%2FdouyuLive');
 
-//打开章
-casper.viewport(1024, 10000).thenEvaluate(function(chapter){
-  var elements = document.querySelectorAll('div.list-view-container .list-view dd.list-view-item');
-  
+function openFolder(folderName) {
+    casper.viewport(1024, 10000).thenEvaluate(function(folderName){
+    var elements = document.querySelectorAll('div.list-view-container .list-view dd.list-view-item');
+  var __openFolderFlag = false;
   for (var i = elements.length - 1; i >= 0; i--) {
-  	var filenameTag = elements[i].querySelector('a.filename');
-  	if(filenameTag.getAttribute('title') === chapter){
-  		$(filenameTag).click();
-  		return;
-  	}
+    var filenameTag = elements[i].querySelector('a.filename');
+    if(filenameTag.getAttribute('title') === folderName){
+      __openFolderFlag = true;
+      $(filenameTag).click();
+      return;
+    }
+  }
+  if(!__openFolderFlag){
+    openFolder(folderName);
   }
 },{
-    chapter: chapter
+    folderName: folderName
 });
-//下载节
-casper.wait(10000,function(){
-	this.evaluate(function(section){
-		var elements = document.querySelectorAll('div.list-view-container .list-view dd.list-view-item');
-		
-	  for (var i = elements.length - 1; i >= 0; i--) {
-	  	var filenameTag = elements[i].querySelector('a.filename');
-	  	if(filenameTag.getAttribute('title') === section){
-	  		var clickBt = elements[i].querySelector('.operate .icon-download-blue[title=下载]');
+}
 
-	  		$(clickBt).click();
-	  		break;
-	  	}
-	  }
-	},{
-		section : section
-	});
-	
+function getDownloadInfo(file) {
+  casper.wait(10000,function(){
+  this.evaluate(function(file){
+      var elements = document.querySelectorAll('div.list-view-container .list-view dd.list-view-item');
+    var __getInfoFlag = false;
+    for (var i = elements.length - 1; i >= 0; i--) {
+      var filenameTag = elements[i].querySelector('a.filename');
+      if(filenameTag.getAttribute('title') === file){
+        var clickBt = elements[i].querySelector('.operate .icon-download-blue[title=下载]');
+        __getInfoFlag = true;
+        $(clickBt).click();
+        break;
+      }
+    }
+    if(!__getInfoFlag){
+      getDownloadInfo();
+    }
+  },{
+    file : file
+  });
 });
+}
+
+//打开章
+openFolder(chapter);
+
+//下载节
+getDownloadInfo(section);
+
 
 casper.then(function () {
   casper.on('resource.requested', function (request) {

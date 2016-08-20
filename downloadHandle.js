@@ -18,7 +18,9 @@ function __getDownloadFileInfo(chapter,section) {
 	}
 	return new Promise((reslove,reject) => {
 		logger.info(`开始读取下载信息: ${chapter} ${section} `);
-	  	let ls = exec(`casperjs ./casperSH/downloadFile.js ${chapter} ${section} ${baseConfig.cookie_BDUSS} ${baseConfig.cookie_STOKEN}`,(error,stdout,stderr) => {
+	  	let ls = exec(`casperjs ./casperSH/downloadFile.js ${chapter} ${section} ${baseConfig.cookie_BDUSS} ${baseConfig.cookie_STOKEN}`,{
+	  		timeout : 1000 * 60 * 3
+	  	},(error,stdout,stderr) => {
 	  		if (error ) {
 				reject(error);
 				return;
