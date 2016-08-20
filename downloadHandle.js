@@ -17,6 +17,7 @@ function __getDownloadFileInfo(chapter,section) {
 		fs.mkdirSync('data')
 	}
 	return new Promise((reslove,reject) => {
+		logger.info(`开始读取下载信息: ${chapter} ${section} `);
 	  	let ls = exec(`casperjs ./casperSH/downloadFile.js ${chapter} ${section} ${baseConfig.cookie_BDUSS} ${baseConfig.cookie_STOKEN}`,(error,stdout,stderr) => {
 	  		if (error ) {
 				reject(error);
@@ -27,6 +28,7 @@ function __getDownloadFileInfo(chapter,section) {
 			}
 			let downloadInfo = null;
 			try{
+				logger.info(`读取下载信息成功: ${chapter} ${section} `);
 				downloadInfo = JSON.parse(stdout);
 			}catch(e){
 				logger.error(e);
@@ -60,7 +62,9 @@ module.exports = {
 		.then((downloadInfo) =>{
 			//下载
 			return download(downloadInfo.url,{
-				headers : downloadInfo.headers
+				headers : downloadInfo.headers,
+				timeout : 1000*60*15,
+				retries : 2
 			}).then(data => {
 				logger.info(`写入:${__dirname}/data/${section}.zip`);
 				fs.writeFileSync(`${__dirname}/data/${section}.zip`, data);
