@@ -18,7 +18,9 @@ module.exports = {
 	 */
 	startLiveAndGetInfo : function () {
 		return new Promise((reslove,reject) => {
-		  	let ls = exec(`casperjs ./casperSH/startlive.js ${baseConfig.cookie_ACFAUTH}`,(error,stdout,stderr) => {
+		  	let ls = exec(`casperjs ./casperSH/startlive.js ${baseConfig.cookie_ACFAUTH}`,{
+	  			timeout : 1000 * 60 * 3
+	  		},(error,stdout,stderr) => {
 		  		if (error ) {
 					reject(error);
 					return;
