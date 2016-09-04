@@ -31,13 +31,16 @@ module.exports = {
 				let downloadInfo = null;
 				try{
 					downloadInfo = JSON.parse(stdout);
+					if(_.isEmpty(downloadInfo.rtmpUrl) || _.isEmpty(downloadInfo.rtmpCode)){
+						throw new Error('得到直播信息失败');
+					}
 				}catch(e){
 					logger.error(e);
 					reject(e);
 					return;
 				}
 
-				if(downloadInfo.rtmpUrl && downloadInfo.rtmpCode)	reslove(downloadInfo);
+				reslove(downloadInfo);
 		  	});
 		});
 	}
