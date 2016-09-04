@@ -5,7 +5,7 @@
 
 const path = require('path');
 const moment = require('moment');
-var fontPath = path.join(__dirname,'../font/simhei.ttf');
+var fontPath = path.join(__dirname,'../font/FZZhunYuan-M02.ttf');
 
 
 module.exports = function(chapterConf){
