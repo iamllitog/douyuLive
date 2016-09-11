@@ -39,6 +39,10 @@ function loopLogic(currentChapter) {
 		del([`${__dirname}/data/${chapter.section}`]);
 		chapter = nextChapter;
 		return loopLogic(nextChapter);
+	}).catch(function(err){
+		logger.error("遇到异常，中断进程");
+		logger.error(err);
+		process.exit();
 	});
 }
 //2.根据读取到的章节去百度云盘上去数据

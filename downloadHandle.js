@@ -65,7 +65,7 @@ module.exports = {
 			//下载
 			return download(downloadInfo.url,{
 				headers : downloadInfo.headers,
-				timeout : 1000*60*15,
+				timeout : 1000*60*20,
 				retries : 2
 			}).then(data => {
 				logger.info(`写入:${__dirname}/data/${section}.zip`);
@@ -73,31 +73,25 @@ module.exports = {
 			});
 		}).then(() => {
 			logger.info(`下载完成:${section}.zip`);
+			if(!fs.existsSync(`${__dirname}/data/tmp/`))
+				fs.mkdirSync(`${__dirname}/data/tmp/`);
 			//解压到data根目录
 			return new Promise((reslove,reject) => {
 				let flag = true;
-				let stream = null
 				fs.createReadStream(`${__dirname}/data/${section}.zip`)
-					.pipe(unzip.Parse())
-					.on('entry', function (entry) {
-						let filePath = entry.path;
-				    		let type = entry.type; // 'Directory' or 'File' 
-				    		if (filePath.indexOf(`${chapter}/${section}/${section}`) > 0 && type === 'File') {
-				      			stream = entry.pipe(fs.createWriteStream(`${__dirname}/data/${section}`));
-				      			stream.on('finish', function () {
-				      				reslove();
-				      			});
-				      			stream.on('error', function (err) {
-				      				if(err)	reject(err);
-				      			});
-				   	 	} else {
-				      			entry.autodrain();
-				    		}
-				  	});
+					.pipe(unzip.Extract({ path:`${__dirname}/data/tmp` }))
+  					.on('finish', function () {
+  						logger.info(`解压完成`);
+  						reslove();
+  					})
+  					.on('error', function (err) {
+  						reject(err);
+  					});
 			});
 		}).then(() =>{
+			fs.renameSync(`${__dirname}/data/tmp/douyuLive/${chapter}/${section}`, `${__dirname}/data/${section}`);
 			//删除源文件
-			return del([`${__dirname}/data/${section}.zip`]);
+			return del([`${__dirname}/data/tmp/`,`${__dirname}/data/${section}.zip`]);
 		});
 	}
 };

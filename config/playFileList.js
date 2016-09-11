@@ -3,7 +3,13 @@
  * @type {Array}
  */
 module.exports = function () {
-	return [{
+	return [
+	// {
+	// 	title : "hellsing",
+	// 	cntitle : "Hellsing",
+	// 	section : ['1.mp4','2.mp4','3.mp4','4.mp4','5.mp4','6.mp4','7.mp4','8.mp4','9.mp4','10.mp4']
+	// },
+	{
 		title : "youyoubaishu",
 		cntitle : "幽游白书",
 		starttime : 87,

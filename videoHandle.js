@@ -2,6 +2,7 @@
  * 处理视频流到bilibili直播上
  */
 const ffmpeg = require('fluent-ffmpeg');
+const fs = require('fs');
 const logger = require('./logger');
 const waterMarkList = require('./config/waterMarkList');
 
@@ -17,7 +18,7 @@ module.exports = {
         let starttime = chapter.starttime ? chapter.starttime : 0;
         let duration = chapter.duration;
         return new Promise((reslove,reject) => {
-            ffmpeg.ffprobe(`${__dirname}/data/${section}`, function(err, metadata) {
+            ffmpeg.ffprobe(`${__dirname}/data/${section}/${section}`, function(err, metadata) {
                 let stream = metadata.streams.find((value,index) => {
                     return value.codec_type === 'video';
                 });
@@ -33,7 +34,10 @@ module.exports = {
             });
         }).then((aspect) => {
             return new Promise((reslove ,reject) => {
-            let inputPath = `${__dirname}/data/${section}`;
+            //判断是否需要添加字幕
+            let hasSubtitles = fs.existsSync(`${__dirname}/data/${section}/sc.ass`);
+
+            let inputPath = `${__dirname}/data/${section}/${section}`;
             let outputPath = `${liveInfo.rtmpUrl}/${liveInfo.rtmpCode}`;
 
             let videoW = null;
@@ -48,11 +52,9 @@ module.exports = {
             }else if(aspect === '16:9'){
                 videoW = 1024;
                 videoH = 600;
-                screenW = 1224;
+                screenW = 1024;
                 screenH = 600;
             }
-
-
 
             let x = (screenW - videoW)/2;
 
@@ -77,6 +79,18 @@ module.exports = {
                     outputs: ['output']
                 }
             ];
+
+            //添加字幕
+            if(hasSubtitles){
+                filterList.push({
+                    filter: 'subtitles',
+                    options: {
+                        filename : `${__dirname}/data/${section}/sc.ass`,
+                    },
+                    inputs: ['output'],
+                    outputs: ['output']
+                });
+            }
 
             filterList = filterList.concat(waterMarkList(chapter));
 
