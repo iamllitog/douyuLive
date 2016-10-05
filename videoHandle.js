@@ -2,6 +2,7 @@
  * 处理视频流到bilibili直播上
  */
 const ffmpeg = require('fluent-ffmpeg');
+const _ = require('lodash');
 const fs = require('fs');
 const logger = require('./logger');
 const waterMarkList = require('./config/waterMarkList');
@@ -19,11 +20,17 @@ module.exports = {
         let duration = chapter.duration;
         return new Promise((reslove,reject) => {
             ffmpeg.ffprobe(`${__dirname}/data/${section}/${section}`, function(err, metadata) {
-                let stream = metadata.streams.find((value,index) => {
-                    return value.codec_type === 'video';
-                });
+                if(err){
+                    reject(err);
+                }
+                let stream = null;
+                if(!_.isEmpty(metadata)){
+                    stream = metadata.streams.find((value,index) => {
+                        return value.codec_type === 'video';
+                    });
+                }
 
-                if(stream){
+                if(!_.isEmpty(stream)){
                     if(stream.width/stream.height > 1.3 && stream.width/stream.height < 1.4)    reslove('4:3');
                     else if(stream.width/stream.height > 1.7 && stream.width/stream.height < 1.8)   reslove('16:9');
                     else    reject(new Error('此视频暂时无法解析'));
