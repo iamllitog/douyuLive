@@ -30,13 +30,14 @@ function __getDownloadFileInfo(chapter,section) {
 			}
 			let downloadInfo = null;
 			try{
-				logger.info(`读取下载信息成功: ${chapter} ${section} `);
 				downloadInfo = JSON.parse(stdout);
 			}catch(e){
+				logger.error(`下载失败信息:${stdout}`);
 				logger.error(e);
 				reject(e);
 				return;
 			}
+			logger.info(`读取下载信息成功: ${chapter} ${section} `);
 			let headersObj = {};
 			let headersArr = downloadInfo.headers;
 			for (let index in headersArr) {

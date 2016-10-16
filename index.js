@@ -40,7 +40,8 @@ function loopLogic(currentChapter) {
 		chapter = nextChapter;
 		return loopLogic(nextChapter);
 	}).catch(function(err){
-		logger.error("遇到异常，中断进程");
+		del([`${__dirname}/data`]);
+		logger.error("遇到异常，删除缓存文件，中断进程");
 		logger.error(err);
 		process.exit();
 	});

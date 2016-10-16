@@ -38,6 +38,10 @@ var helper = {
 				return true;
 			}
 		});
+		if(_.isEmpty(nowPlayList)){
+			nowPlayList = playFileListConf[0];
+		}
+
 		let currentSection = 0;
 		let flag = false;
 		let nowSection = nowPlayList.section.find((value, index, arr) => {
