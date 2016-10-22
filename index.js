@@ -25,6 +25,13 @@ if(!chapter){
 	helper.setLastChapter(chapter);
 }
 
+function errorHandle(err) {
+	del([`${__dirname}/data`]);
+	logger.error("遇到异常，删除缓存文件，中断进程");
+	logger.error(err);
+	process.exit();
+}
+
 function loopLogic(currentChapter) {
 	return Promise.all([
 		videoHandle.pushStream(currentChapter,globalLiveInfo),
@@ -40,10 +47,7 @@ function loopLogic(currentChapter) {
 		chapter = nextChapter;
 		return loopLogic(nextChapter);
 	}).catch(function(err){
-		del([`${__dirname}/data`]);
-		logger.error("遇到异常，删除缓存文件，中断进程");
-		logger.error(err);
-		process.exit();
+		errorHandle(err);
 	});
 }
 //2.根据读取到的章节去百度云盘上去数据
@@ -57,5 +61,5 @@ openLiveHandle.startLiveAndGetInfo().then((liveInfo) => {
 	logger.info('开始直播！！！');
 	return loopLogic(chapter);
 }).catch(function (err){
-	logger.error(err);
+	errorHandle(err);
 });
