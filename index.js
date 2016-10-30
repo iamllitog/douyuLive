@@ -33,16 +33,21 @@ function errorHandle(err) {
 }
 
 function loopLogic(currentChapter) {
-	return Promise.all([
-		videoHandle.pushStream(currentChapter,globalLiveInfo),
-		new Promise((reslove,reject) => {
-			let nextChapter = helper.getNextChapter(currentChapter.chapter,currentChapter.section);
-			return downloadHandle.downloadByCS(nextChapter.chapter,nextChapter.section).then(() =>{
-				helper.setLastChapter(nextChapter);
-				reslove(nextChapter);
-			});
-		})
-	]).then(([unuseful,nextChapter]) => {
+	return openLiveHandle.checkIsLive().then(function(isLive){
+		if (!isLive){
+			throw new Error("检测到没有开始直播！！重启服务器！！");
+		}
+		return Promise.all([
+			videoHandle.pushStream(currentChapter,globalLiveInfo),
+			new Promise((reslove,reject) => {
+				let nextChapter = helper.getNextChapter(currentChapter.chapter,currentChapter.section);
+				return downloadHandle.downloadByCS(nextChapter.chapter,nextChapter.section).then(() =>{
+					helper.setLastChapter(nextChapter);
+					reslove(nextChapter);
+				});
+			})
+		])
+	}) .then(([unuseful,nextChapter]) => {
 		del([`${__dirname}/data/${chapter.section}`]);
 		chapter = nextChapter;
 		return loopLogic(nextChapter);
