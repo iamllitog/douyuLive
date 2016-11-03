@@ -6,6 +6,7 @@ const _ = require('lodash');
 const fs = require('fs');
 const logger = require('./logger');
 const waterMarkList = require('./config/waterMarkList');
+const helper = require('./helper');
 
 module.exports = {
     /**
@@ -15,9 +16,10 @@ module.exports = {
      * @return {Promise} 
      */
     pushStream : function(chapter,liveInfo) {
-        let section = chapter.section;
+        let section = helper.getChapterFileName(chapter);
         let starttime = chapter.starttime ? chapter.starttime : 0;
         let duration = chapter.duration;
+        console.log(section);
         return new Promise((reslove,reject) => {
             ffmpeg.ffprobe(`${__dirname}/data/${section}/${section}`, function(err, metadata) {
                 if(err){

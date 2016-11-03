@@ -9,6 +9,22 @@ const playFileList = require('./config/playFileList');
 const logger = require('./logger');
 
 var helper = {
+
+	/**
+	 * 得到要下载的文件名
+	 * @param  {object} chapter 下载章节信息
+	 * @return {String}         文件名
+	 */
+	getChapterFileName : function(chapter){
+		let fileName = '';
+		if (typeof(chapter.section) === 'string'){
+			fileName = chapter.section;
+		}else if (typeof(chapter.section) === 'object'){
+			fileName = chapter.section.fileName;
+		}
+
+		return fileName;
+	},
 	/**
 	 * 得到最后播放章节
 	 * @return {JSON} 最后章节JSON,如无此文件或数据返回null
@@ -45,7 +61,15 @@ var helper = {
 		let currentSection = 0;
 		let flag = false;
 		let nowSection = nowPlayList.section.find((value, index, arr) => {
-			if(value === section)	{
+			let mySection = '';
+
+			if (typeof(value) === 'string'){
+				mySection = value;
+			}else if (typeof(value) === 'object'){
+				mySection = value.fileName;
+			}
+
+			if(mySection === section)	{
 				currentSection = index;
 				flag = true;
 			}
@@ -54,8 +78,8 @@ var helper = {
 
 		if(typeof nowSection === 'undefined'){
 			//换盘了
-			if(typeof playFileListConf[currentPlaylistIndex+1] === 'undefined')		nowPlayList = playFileListConf[0];
-			else																nowPlayList = playFileListConf[currentPlaylistIndex +1];
+			if(typeof playFileListConf[currentPlaylistIndex+1] === 'undefined')	nowPlayList = playFileListConf[0];
+			else									nowPlayList = playFileListConf[currentPlaylistIndex +1];
 
 			nowSection = nowPlayList.section[0];
 		}

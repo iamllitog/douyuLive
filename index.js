@@ -40,15 +40,16 @@ function loopLogic(currentChapter) {
 		return Promise.all([
 			videoHandle.pushStream(currentChapter,globalLiveInfo),
 			new Promise((reslove,reject) => {
-				let nextChapter = helper.getNextChapter(currentChapter.chapter,currentChapter.section);
-				return downloadHandle.downloadByCS(nextChapter.chapter,nextChapter.section).then(() =>{
+				
+				let nextChapter = helper.getNextChapter(currentChapter.chapter,helper.getChapterFileName(currentChapter));
+				return downloadHandle.downloadByCS(nextChapter.chapter,helper.getChapterFileName(nextChapter)).then(() =>{
 					helper.setLastChapter(nextChapter);
 					reslove(nextChapter);
 				});
 			})
 		])
 	}) .then(([unuseful,nextChapter]) => {
-		del([`${__dirname}/data/${chapter.section}`]);
+		del([`${__dirname}/data/${helper.getChapterFileName(chapter)}`]);
 		chapter = nextChapter;
 		return loopLogic(nextChapter);
 	}).catch(function(err){
@@ -58,9 +59,9 @@ function loopLogic(currentChapter) {
 //2.根据读取到的章节去百度云盘上去数据
 openLiveHandle.startLiveAndGetInfo().then((liveInfo) => {
 	globalLiveInfo = liveInfo;
-	return fs.existsSync(`./data/${chapter.section}`) ;
+	return fs.existsSync(`./data/${helper.getChapterFileName(chapter)}`) ;
 }).then((haveDownLoadFile) =>{
-	if(!haveDownLoadFile)	return downloadHandle.downloadByCS(chapter.chapter,chapter.section);
+	if(!haveDownLoadFile)	return downloadHandle.downloadByCS(chapter.chapter,helper.getChapterFileName(chapter));
 	return;
 }).then(() => {
 	logger.info('开始直播！！！');

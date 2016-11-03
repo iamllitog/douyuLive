@@ -10,6 +10,14 @@ var fontPath = path.join(__dirname,'../font/FZZhunYuan-M02.ttf');
 
 module.exports = function(chapterConf){
 	var arr = [];
+	if(chapterConf.waterMarks){
+		for(var i = 0;i<chapterConf.waterMarks.length;i++){
+			var markItem = chapterConf.waterMarks[i];
+			markItem.inputs = ['output'];
+			markItem.outputs = ['output'];
+			arr.push(markItem);
+		}
+	}
 	if(chapterConf.cntitle){
 		arr.push({
 			filter: 'drawtext',
@@ -24,12 +32,18 @@ module.exports = function(chapterConf){
 		});
 	}
 	if(chapterConf.section){
+		let section = '';
+		if (typeof(chapterConf.section) === 'String'){
+			section = chapterConf.section;
+		}else if (typeof(chapterConf.section) === 'object'){
+			section = chapterConf.section.desc;
+		}
 		arr.push({
 			filter: 'drawtext',
 			options: {
 			    fontfile:fontPath,
 			    fontcolor:'white',
-			    text:chapterConf.section,
+			    text:section,
 			    x : 'main_w - text_w',
 			    y : 'main_h - text_h*4'
 			},
@@ -56,7 +70,6 @@ module.exports = function(chapterConf){
 	}
 	//去掉最后一个output
 	delete arr[arr.length -1].outputs;
-
 	return arr;
 
 };
